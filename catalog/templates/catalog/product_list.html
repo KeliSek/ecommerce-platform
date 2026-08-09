@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h1>Products</h1>
+
+<div>
+    <a href="{% url 'catalog:product_list' %}">All</a>
+    {% for category in categories %}
+    | <a href="?category={{ category.slug }}">{{ category.name }}</a>
+    {% endfor %}
+</div>
+
+{% for product in products %}
+<div>
+    <a href="{% url 'catalog:product_detail' product.slug %}">{{ product.name }}</a>
+    - ${{ product.price }}
+    {% if not product.in_stock %}(Out of stock){% endif %}
+</div>
+{% empty %}
+<p>No products yet.</p>
+{% endfor %}
+{% endblock %}

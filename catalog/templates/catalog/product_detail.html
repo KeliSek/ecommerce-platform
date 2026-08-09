@@ -1,0 +1,10 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h1>{{ product.name }}</h1>
+{% if product.image %}
+<img src="{{ product.image.url }}" alt="{{ product.name }}" width="300">
+{% endif %}
+<p>{{ product.description }}</p>
+<p>${{ product.price }}</p>
+<p>{% if product.in_stock %}In stock ({{ product.stock }} left){% else %}Out of stock{% endif %}</p>
+{% endblock %}
