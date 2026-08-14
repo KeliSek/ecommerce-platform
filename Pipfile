@@ -9,6 +9,8 @@ psycopg2-binary = "*"
 python-decouple = "*"
 django-htmx = "*"
 pillow = "*"
+django-crispy-forms = "*"
+crispy-bootstrap5 = "*"
 
 [dev-packages]
 

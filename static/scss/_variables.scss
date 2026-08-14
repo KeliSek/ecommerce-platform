@@ -1,0 +1,21 @@
+// Custom Variables
+$platinum: #eaebed;
+$cerulean-dark: #006989;
+$cool-steel: #a3bac3;
+$cerulean: #007090;
+$pacific-blue: #01a7c2;
+
+$primary: $cerulean;
+$secondary: $cool-steel;
+$light: $platinum;
+$dark: $cerulean-dark;
+$info: $pacific-blue;
+$font-family-sans-serif: "Inter", system-ui, sans-serif;
+$border-radius: 0.5rem;
+
+// keep only project variables here (bootstrap imports are handled in main.scss)
+// Custom theme colors to be merged after Bootstrap's variables are loaded
+$custom-theme-colors: (
+  "altlight": #fbf5e5,
+  "altdark": #c29938,
+);

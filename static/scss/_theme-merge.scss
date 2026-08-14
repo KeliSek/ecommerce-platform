@@ -1,0 +1,9 @@
+// Merge custom theme colors into Bootstrap's $theme-colors
+// This must be imported after Bootstrap's variables have been loaded.
+
+// Only merge if both maps exist to avoid undefined variable errors
+@if variable-exists(theme-colors) and variable-exists(custom-theme-colors) {
+  $theme-colors: map-merge($custom-theme-colors, $theme-colors);
+} @else if variable-exists(custom-theme-colors) {
+  $theme-colors: $custom-theme-colors;
+}

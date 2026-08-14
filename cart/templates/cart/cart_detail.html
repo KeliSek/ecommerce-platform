@@ -1,0 +1,114 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
+            <div>
+                <h1 class="h2 mb-2">Your Cart</h1>
+                <p class="text-muted mb-0">Review items, update quantities, or remove products before checkout.</p>
+            </div>
+            {% if cart|length > 0 %}
+            <div class="text-md-end">
+                <span class="badge bg-primary fs-6">{{ cart|length }} items</span>
+                <span class="badge bg-secondary fs-6 ms-2">${{ cart.get_total_price }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if cart|length == 0 %}
+        <div class="card shadow border-0">
+            <div class="card-body text-center py-5">
+                <h2 class="h4 mb-3">Your cart is empty</h2>
+                <p class="text-muted mb-4">Browse our store and add products you love.</p>
+                <a href="{% url 'catalog:product_list' %}" class="btn btn-primary">Shop Products</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card shadow border-0">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Total</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in cart %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                {% if item.product.image %}
+                                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                                                    class="rounded"
+                                                    style="width: 80px; height: 80px; object-fit: cover;">
+                                                {% else %}
+                                                <div class="bg-secondary bg-opacity-10 rounded d-flex align-items-center justify-content-center"
+                                                    style="width: 80px; height: 80px;">
+                                                    <span class="text-muted small">No image</span>
+                                                </div>
+                                                {% endif %}
+                                                <div>
+                                                    <a href="{% url 'catalog:product_detail' item.product.slug %}"
+                                                        class="text-decoration-none fw-semibold text-dark">
+                                                        {{ item.product.name }}</a>
+                                                    {% if not item.product.in_stock %}
+                                                    <div class="small text-danger">Out of stock</div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="fw-semibold">${{ item.price }}</td>
+                                        <td>
+                                            <form action="{% url 'cart:cart_add' item.product.id %}" method="post"
+                                                class="d-flex align-items-center gap-2">
+                                                {% csrf_token %}
+                                                {{ item.update_quantity_form.quantity }}
+                                                {{ item.update_quantity_form.override }}
+                                                <button type="submit"
+                                                    class="btn btn-sm btn-outline-secondary">Update</button>
+                                            </form>
+                                        </td>
+                                        <td class="fw-semibold">${{ item.total_price }}</td>
+                                        <td>
+                                            <form action="{% url 'cart:cart_remove' item.product.id %}" method="post">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card shadow border-0">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">Order Summary</h2>
+                        <dl class="row mb-4">
+                            <dt class="col-6 text-muted">Items</dt>
+                            <dd class="col-6 text-end">{{ cart|length }}</dd>
+                            <dt class="col-6 text-muted">Subtotal</dt>
+                            <dd class="col-6 text-end fw-semibold">${{ cart.get_total_price }}</dd>
+                        </dl>
+                        <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary w-100 mb-2">Continue
+                            Shopping</a>
+                        <a href="#" class="btn btn-primary w-100">Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

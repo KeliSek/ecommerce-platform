@@ -1,0 +1,9 @@
+// Project variables first
+@import "variables";
+
+// Load Bootstrap (use node_modules include path if your build tool supports it)
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+// Merge custom theme colors after Bootstrap's variables are available
+@import "theme-merge";
+
