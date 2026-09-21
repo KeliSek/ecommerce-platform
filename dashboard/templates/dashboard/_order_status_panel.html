@@ -1,7 +1,7 @@
 {# dashboard/templates/dashboard/_order_status_panel.html #}
 {% load crispy_forms_tags %}
 <div id="order-status-panel">
-    <div class="card shadow-sm border-0 mb-3">
+    <div class="card border-0 mb-3">
         <div class="card-header bg-white fw-semibold">Status</div>
         <div class="card-body">
             <span class="badge bg-secondary mb-3">{{ order.get_status_display }}</span>
@@ -17,7 +17,7 @@
             </form>
         </div>
     </div>
-    <div class="card shadow-sm border-0">
+    <div class="card border-0">
         <div class="card-header bg-white fw-semibold">History</div>
         <ul class="list-group list-group-flush">
             {% for entry in order.status_history.all %}

@@ -2,7 +2,7 @@
 {% extends 'dashboard/base_dashboard.html' %}
 {% block dashboard_content %}
 {# dashboard/templates/dashboard/product_list.html — replace the existing "Add product" button block with: #}
-<div class="d-flex gap-2 mb-3">
+<div class="dashboard-toolbar">
     <a href="{% url 'dashboard:product_ai_upload' %}" class="btn btn-outline-primary">
         <i class="bi bi-stars"></i> AI-assisted add
     </a>
@@ -31,7 +31,7 @@
 </form>
 
 <div class="table-responsive">
-    <table class="table table-hover align-middle bg-white shadow-sm">
+    <table class="table responsive-table dashboard-table table-hover align-middle">
         <thead>
             <tr>
                 <th></th>
@@ -47,25 +47,24 @@
             {% if page_obj %}
                 {% for product in page_obj %}
                 <tr>
-                    <td style="width:60px;">
-                        {% if product.image %}<img src="{{ product.image.url }}" class="rounded"
-                            style="width:48px;height:48px;object-fit:cover;">{% endif %}
+                    <td data-label="Image">
+                        {% if product.image %}<img src="{{ product.image.url }}" class="rounded dashboard-product-image" width="56" height="56" loading="lazy" alt="{{ product.name }}">{% else %}<span class="text-muted small">No image</span>{% endif %}
                     </td>
-                    <td class="">{{ product.name }}</td>
-                    <td>{{ product.category.name|default:"—" }}</td>
-                    <td>GH₵{{ product.price }}</td>
-                    <td>
+                    <td data-label="Name">{{ product.name }}</td>
+                    <td data-label="Category">{{ product.category.name|default:"—" }}</td>
+                    <td data-label="Price">GH₵{{ product.price }}</td>
+                    <td data-label="Stock">
                         {{ product.stock }}
                         {% if product.stock <= low_stock_threshold %}<span class="badge bg-danger ms-1">Low</span>{% endif %}
                     </td>
-                    <td>
+                    <td data-label="Active">
                         {% if product.is_active %}
                             <span class="badge bg-success">Active</span>
                         {% else %}
                             <span class="badge bg-secondary">Hidden</span>
                         {% endif %}
                     </td>
-                    <td class="text-end">
+                    <td data-label="Actions" class="text-end">
                         <a href="{% url 'dashboard:product_update' product.pk %}"
                             class="btn btn-sm btn-outline-primary">Edit</a>
                         <form action="{% url 'dashboard:product_delete' product.pk %}" method="post" class="d-inline"

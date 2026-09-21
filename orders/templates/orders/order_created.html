@@ -1,20 +1,18 @@
 {% extends 'core/base.html' %}
 {% block content %}
-<div class="container-fluid py-5" style="margin-top: 110px;">
+<div class="status-page">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="card shadow border-0 text-center">
+                <div class="card border-0 text-center">
                     <div class="card-body p-5">
                         <div class="mb-4">
-                            <span
-                                class="badge bg-success-subtle text-success-emphasis border border-success-subtle px-3 py-2 mb-3">
-                                <i class="bi bi-check-circle-fill me-2"></i>Order Confirmed
-                            </span>
+                            <div class="status-icon status-icon-success mx-auto mb-3" aria-hidden="true"><i class="bi bi-check-lg"></i></div>
+                            <p class="text-success fw-semibold mb-2">Order confirmed</p>
                             <h1 class="h2 mb-3">Thank you for your order!</h1>
                             <p class="text-muted mb-0">Your order has been placed successfully and is now being
                                 processed.</p>
-                            <a href="{% url 'payments:initiate_payment' order.id %}" class="btn btn-success">Pay Now</a>
+                            <a href="{% url 'payments:initiate_payment' order.id %}" class="btn btn-success mt-3">Pay now</a>
                         </div>
 
                         <div class="row g-3 text-start mb-4">

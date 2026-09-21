@@ -6,7 +6,7 @@
     </span>
     {% endif %}
     {% if state == "added" %}
-    <button type="button" class="btn btn-success w-100 btn-sm" disabled
+    <button type="button" class="btn btn-success btn-action" disabled
         hx-get="{% url 'cart:cart_add_widget' product.id %}"
         hx-trigger="load delay:1200ms"
         hx-target="#add-to-cart-{{ product.id }}"
@@ -14,7 +14,7 @@
         <i class="bi bi-check-lg"></i> Added
     </button>
     {% elif state == "error" %}
-    <button type="button" class="btn btn-danger w-100 btn-sm" disabled
+    <button type="button" class="btn btn-danger btn-action" disabled
         hx-get="{% url 'cart:cart_add_widget' product.id %}"
         hx-trigger="load delay:1800ms"
         hx-target="#add-to-cart-{{ product.id }}"
@@ -29,7 +29,7 @@
         {% csrf_token %}
         <input type="hidden" name="quantity" value="1">
         <input type="hidden" name="override" value="False">
-        <button type="submit" class="btn btn-primary w-100 btn-sm" {% if not product.in_stock %}disabled{% endif %}>
+        <button type="submit" class="btn btn-primary btn-action" {% if not product.in_stock %}disabled{% endif %}>
             <i class="bi bi-cart-plus"></i>
             {% if product.in_stock %}Add to cart{% else %}Out of stock{% endif %}
         </button>

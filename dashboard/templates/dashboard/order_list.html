@@ -1,7 +1,7 @@
 {# dashboard/templates/dashboard/order_list.html #}
 {% extends 'dashboard/base_dashboard.html' %}
 {% block dashboard_content %}
-<h1 class="h3 text-primary mb-4"><i class="bi bi-receipt"></i> Orders</h1>
+<h1 class="h3 mb-4"><i class="bi bi-receipt text-primary" aria-hidden="true"></i> Orders</h1>
 
 <form class="row g-2 mb-3" method="get">
     <div class="col-12 col-md-6">
@@ -21,7 +21,7 @@
 </form>
 
 <div class="table-responsive">
-    <table class="table table-hover align-middle bg-white shadow-sm">
+    <table class="table responsive-table dashboard-table table-hover align-middle">
         <thead>
             <tr>
                 <th>Order #</th>
@@ -36,12 +36,12 @@
             {% if page_obj %}
                 {% for order in page_obj %}
                 <tr>
-                    <td>{{ order.order_number }}</td>
-                    <td>{{ order.full_name }}</td>
-                    <td><span class="badge bg-secondary">{{ order.get_status_display }}</span></td>
-                    <td>GH₵{{ order.get_total_cost }}</td>
-                    <td>{{ order.created_at|date:"d M Y" }}</td>
-                    <td><a href="{% url 'dashboard:order_detail' order.pk %}"
+                    <td data-label="Order">{{ order.order_number }}</td>
+                    <td data-label="Customer">{{ order.full_name }}</td>
+                    <td data-label="Status"><span class="badge bg-secondary">{{ order.get_status_display }}</span></td>
+                    <td data-label="Total">GH₵{{ order.get_total_cost }}</td>
+                    <td data-label="Date">{{ order.created_at|date:"d M Y" }}</td>
+                    <td data-label="Action"><a href="{% url 'dashboard:order_detail' order.pk %}"
                             class="btn btn-sm btn-outline-primary">View</a></td>
                 </tr>
                 {% endfor %}

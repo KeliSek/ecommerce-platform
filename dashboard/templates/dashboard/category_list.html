@@ -1,13 +1,13 @@
 {# dashboard/templates/dashboard/category_list.html #}
 {% extends 'dashboard/base_dashboard.html' %}
 {% block dashboard_content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 text-primary mb-0"><i class="bi bi-tags"></i> Categories</h1>
+<div class="dashboard-toolbar">
+    <h1 class="h3 mb-0"><i class="bi bi-tags text-primary" aria-hidden="true"></i> Categories</h1>
     <a href="{% url 'dashboard:category_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add
         category</a>
 </div>
 <div class="table-responsive">
-    <table class="table table-hover align-middle bg-white shadow-sm">
+    <table class="table responsive-table dashboard-table table-hover align-middle">
         <thead>
             <tr>
                 <th>Name</th>
@@ -18,9 +18,9 @@
         <tbody>
             {% for category in categories %}
             <tr>
-                <td>{{ category.name }}</td>
-                <td>{{ category.products.count }}</td>
-                <td class="text-end">
+                <td data-label="Name">{{ category.name }}</td>
+                <td data-label="Products">{{ category.products.count }}</td>
+                <td data-label="Actions" class="text-end">
                     <a href="{% url 'dashboard:category_update' category.pk %}"
                         class="btn btn-sm btn-outline-primary">Edit</a>
                     <form action="{% url 'dashboard:category_delete' category.pk %}" method="post" class="d-inline"

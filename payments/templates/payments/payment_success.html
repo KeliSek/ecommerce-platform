@@ -1,17 +1,15 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-<div class="container-fluid py-5" style="margin-top: 110px;">
+<div class="status-page">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="card shadow border-0 text-center">
+                <div class="card border-0 text-center">
                     <div class="card-body p-5">
                         <div class="mb-4">
-                            <span
-                                class="badge bg-success-subtle text-success-emphasis border border-success-subtle px-3 py-2 mb-3">
-                                <i class="bi bi-check-circle-fill me-2"></i>Payment Successful
-                            </span>
+                            <div class="status-icon status-icon-success mx-auto mb-3" aria-hidden="true"><i class="bi bi-check-lg"></i></div>
+                            <p class="text-success fw-semibold mb-2">Payment successful</p>
                             <h1 class="h2 mb-2">Thank you, {{ order.full_name }}!</h1>
                             <p class="text-muted mb-0">
                                 Your payment for order <strong>#{{ order.order_number }}</strong> has been confirmed.
@@ -22,7 +20,7 @@
                             <div class="card-body">
                                 <h2 class="h5 mb-3">Order Summary</h2>
                                 <div class="table-responsive">
-                                    <table class="table align-middle mb-0">
+                                    <table class="table responsive-table align-middle mb-0">
                                         <thead class="table-light">
                                             <tr>
                                                 <th>Product</th>
@@ -33,9 +31,9 @@
                                         <tbody>
                                             {% for item in order.items.all %}
                                             <tr>
-                                                <td>{{ item.product.name }}</td>
-                                                <td>{{ item.quantity }}</td>
-                                                <td>GH₵{{ item.get_cost }}</td>
+                                                <td data-label="Product">{{ item.product.name }}</td>
+                                                <td data-label="Quantity">{{ item.quantity }}</td>
+                                                <td data-label="Total">GH₵{{ item.get_cost }}</td>
                                             </tr>
                                             {% empty %}
                                             <tr>

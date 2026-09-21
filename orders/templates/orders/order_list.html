@@ -1,7 +1,6 @@
 {% extends 'core/base.html' %}
 {% block content %}
-<div class="container-fluid py-5" style="margin-top: 110px;">
-    <div class="container">
+<div class="orders-page">
         <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
             <div>
                 <h1 class="h2 mb-2">My Orders</h1>
@@ -16,7 +15,7 @@
         <div class="row g-4">
             {% for order in orders %}
             <div class="col-12">
-                <div class="card shadow-sm border-0">
+                <div class="card border-0">
                     <div class="card-body">
                         <div
                             class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
@@ -26,7 +25,7 @@
                             </div>
                             <div class="d-flex align-items-center gap-2">
                                 <span class="badge text-bg-light border text-dark">{{ order.status|title }}</span>
-                                <span class="fw-semibold">GH₵{{ order.get_total_cost }}</span>
+                                <span class="price">GH₵{{ order.get_total_cost }}</span>
                                 {% if order.status == "pending" %}
                                 <a href="{% url 'payments:initiate_payment' order.id %}"
                                     class="btn btn-success btn-sm">Pay Now</a>
@@ -35,7 +34,7 @@
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table align-middle mb-0">
+                            <table class="table responsive-table align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Product</th>
@@ -47,10 +46,10 @@
                                 <tbody>
                                     {% for item in order.items.all %}
                                     <tr>
-                                        <td>{{ item.product.name }}</td>
-                                        <td>${{ item.price }}</td>
-                                        <td>{{ item.quantity }}</td>
-                                        <td>${{ item.get_cost }}</td>
+                                        <td data-label="Product">{{ item.product.name }}</td>
+                                        <td data-label="Price">GH₵{{ item.price }}</td>
+                                        <td data-label="Quantity">{{ item.quantity }}</td>
+                                        <td data-label="Total">GH₵{{ item.get_cost }}</td>
                                     </tr>
                                     {% empty %}
                                     <tr>
@@ -66,7 +65,7 @@
             {% endfor %}
         </div>
         {% else %}
-        <div class="card shadow border-0">
+        <div class="empty-state">
             <div class="card-body text-center py-5">
                 <h2 class="h4 mb-3">No orders yet</h2>
                 <p class="text-muted mb-4">Your order history will appear here once you place an order.</p>
@@ -74,6 +73,5 @@
             </div>
         </div>
         {% endif %}
-    </div>
 </div>
 {% endblock %}

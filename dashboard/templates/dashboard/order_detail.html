@@ -2,14 +2,14 @@
 {% extends 'dashboard/base_dashboard.html' %}
 {% load crispy_forms_tags %}
 {% block dashboard_content %}
-<h1 class="h3 text-primary mb-4"><i class="bi bi-receipt"></i> Order {{ order.order_number }}</h1>
+<h1 class="h3 mb-4"><i class="bi bi-receipt text-primary" aria-hidden="true"></i> Order {{ order.order_number }}</h1>
 
 <div class="row g-4">
     <div class="col-12 col-lg-7">
-        <div class="card shadow-sm border-0">
+        <div class="card border-0">
             <div class="card-header bg-white fw-semibold">Items</div>
             <div class="table-responsive">
-                <table class="table mb-0">
+                <table class="table responsive-table mb-0">
                     <thead>
                         <tr>
                             <th>Product</th>
@@ -21,10 +21,10 @@
                     <tbody>
                         {% for item in order.items.all %}
                         <tr>
-                            <td>{{ item.product.name }}</td>
-                            <td>GH₵{{ item.price }}</td>
-                            <td>{{ item.quantity }}</td>
-                            <td>GH₵{{ item.get_cost }}</td>
+                            <td data-label="Product">{{ item.product.name }}</td>
+                            <td data-label="Price">GH₵{{ item.price }}</td>
+                            <td data-label="Quantity">{{ item.quantity }}</td>
+                            <td data-label="Subtotal">GH₵{{ item.get_cost }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -39,7 +39,7 @@
         </div>
     </div>
     <div class="col-12 col-lg-5">
-        <div class="card shadow-sm border-0 mb-3">
+        <div class="card border-0 mb-3">
             <div class="card-header bg-white fw-semibold">Customer</div>
             <div class="card-body">
                 <p class="mb-1"><strong>{{ order.full_name }}</strong></p>
