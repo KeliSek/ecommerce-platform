@@ -6,9 +6,13 @@ depend on network/API details.
 """
 import base64
 import json
+import time
 
 import requests
 from django.conf import settings
+
+RETRY_STATUSES = {500, 502, 503, 504}
+MAX_ATTEMPTS = 3
 
 GEMINI_ENDPOINT = (
     "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
@@ -36,7 +40,6 @@ class AIAnalysisError(Exception):
     """Raised when the Gemini API call fails or returns unusable data."""
 
 
-# dashboard/ai.py — replace the analyze_product_image function's request-building section
 def analyze_product_image(image_bytes, mime_type):
     api_key = getattr(settings, "GEMINI_API_KEY", None)
     if not api_key:
@@ -65,20 +68,35 @@ def analyze_product_image(image_bytes, mime_type):
         },
     }
 
-    try:
-        response = requests.post(
-            url,
-            headers={"x-goog-api-key": api_key, "Content-Type": "application/json"},
-            json=payload,
-            timeout=20,
-        )
-        response.raise_for_status()
-    except requests.RequestException as exc:
-        detail = ""
-        if exc.response is not None:
-            detail = f" — {exc.response.status_code}: {exc.response.text[:300]}"
-        raise AIAnalysisError(f"Gemini request failed: {exc}{detail}") from exc
+    response = None
+    for attempt in range(MAX_ATTEMPTS):
+        is_last = attempt == MAX_ATTEMPTS - 1
+        try:
+            response = requests.post(
+                url,
+                headers={"x-goog-api-key": api_key, "Content-Type": "application/json"},
+                json=payload,
+                timeout=15,
+            )
+            if response.status_code in RETRY_STATUSES and not is_last:
+                time.sleep(2 ** attempt)  # waits 1s, then 2s
+                continue
+            response.raise_for_status()
+            break
+        except (requests.Timeout, requests.ConnectionError) as exc:
+            if not is_last:
+                time.sleep(2 ** attempt)
+                continue
+            raise AIAnalysisError(f"Gemini request failed: {exc}") from exc
+        except requests.RequestException as exc:
+            detail = ""
+            if exc.response is not None:
+                detail = f" — {exc.response.status_code}: {exc.response.text[:300]}"
+            raise AIAnalysisError(f"Gemini request failed: {exc}{detail}") from exc
 
+    if response is None:
+        raise AIAnalysisError("Gemini request failed: no response received.")
+    
     try:
         data = response.json()
         raw_text = data["candidates"][0]["content"]["parts"][0]["text"]

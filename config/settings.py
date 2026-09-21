@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "cloudinary_storage",
+    "cloudinary",
     # third-party
     "django_htmx",
     # local apps
@@ -168,8 +170,13 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "default": {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": str(config("CLOUDINARY_CLOUD_NAME", default="")),
+    "API_KEY": str(config("CLOUDINARY_API_KEY", default="")),
+    "API_SECRET": str(config("CLOUDINARY_API_SECRET", default="")),
 }
 MESSAGE_TAGS = {
     message_constants.ERROR: "danger",

@@ -157,13 +157,21 @@ def paystack_webhook(request):
         hashlib.sha512,
     ).hexdigest()
 
-    if not hmac.compare_digest(signature, computed):
+    if not hmac.compare_digest(signature.encode("utf-8"), computed.encode("utf-8")):
         return HttpResponseForbidden("Invalid signature")
 
-    event = json.loads(request.body)
+    try:
+        event = json.loads(request.body)
+    except json.JSONDecodeError:
+        return HttpResponse(status=400)
 
     if event.get("event") == "charge.success":
-        _mark_payment_success(event["data"]["reference"], event["data"])
+        data = event.get("data", {})
+        reference = data.get("reference")
+        if reference:
+            _mark_payment_success(reference, data)
+
+    return HttpResponse(status=200)
 
     # Always 200 once the signature checks out, even for events we ignore —
     # Paystack retries (with backoff) on anything else, which we don't want.

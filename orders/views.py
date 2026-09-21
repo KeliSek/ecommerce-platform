@@ -48,8 +48,7 @@ def order_create(request):
                     order.user = request.user
                     order.save()  # generates order_number under this same lock
                     order = form.save(commit=False)
-                    order.user = request.user
-                    order.save()  # generates order_number under this same lock
+
                     OrderStatusHistory.objects.create(
                         order=order,
                         previous_status="",
