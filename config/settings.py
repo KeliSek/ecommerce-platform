@@ -211,7 +211,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 # config/settings.py — add near your PAYSTACK_* settings
 GEMINI_API_KEY = config("GEMINI_API_KEY", default="")
-GEMINI_MODEL = config("GEMINI_MODEL", default="gemini-flash-latest")
+GEMINI_MODEL = config("GEMINI_MODEL", default="gemini-3.1-flash-lite")
 
 
 # config/settings.py — add near your other custom settings
