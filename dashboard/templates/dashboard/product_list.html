@@ -64,7 +64,8 @@
                             <span class="badge bg-secondary">Hidden</span>
                         {% endif %}
                     </td>
-                    <td data-label="Actions" class="text-end">
+                    <td data-label="Actions" class="text-end product-actions-cell">
+                        <div class="product-actions">
                         <a href="{% url 'dashboard:product_update' product.pk %}"
                             class="btn btn-sm btn-outline-primary">Edit</a>
                         <form action="{% url 'dashboard:product_delete' product.pk %}" method="post" class="d-inline"
@@ -72,6 +73,7 @@
                             {% csrf_token %}
                             <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
                         </form>
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
