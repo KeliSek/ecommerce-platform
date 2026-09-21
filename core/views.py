@@ -1,24 +1,29 @@
-from catalog.models import Product
+from catalog.models import Category, Product
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import F
 from django.shortcuts import render
 
 
 # Create your views here.
 def home_view(request):
-    products = Product.objects.filter(is_active=True)
-    paginator = Paginator(products, 8)
-    page_number = request.GET.get("page")
-
-    try:
-        page_obj = paginator.get_page(page_number)
-    except (PageNotAnInteger, EmptyPage):
-        page_obj = paginator.get_page(1)
+    # Featured products - get first 4 active products
+    featured_products = Product.objects.filter(is_active=True)[:4]
+    
+    # Collection products - one per category, ordered by category
+    categories = Category.objects.all()
+    collection_products = []
+    for category in categories:
+        product = Product.objects.filter(
+            category=category, is_active=True
+        ).first()
+        if product:
+            collection_products.append(product)
 
     return render(
         request,
         "core/home.html",
         {
-            "products": page_obj,
-            "page_obj": page_obj,
+            "featured_products": featured_products,
+            "collection_products": collection_products,
         },
     )

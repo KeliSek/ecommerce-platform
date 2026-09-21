@@ -1,0 +1,29 @@
+{# dashboard/templates/dashboard/base_dashboard.html #}
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="row gy-4 py-4" style="margin-top: 110px;">
+    <div class="col-12 col-lg-2">
+        <div class="list-group shadow-sm">
+            <a href="{% url 'dashboard:index' %}"
+                class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                <i class="bi bi-speedometer2"></i> Overview
+            </a>
+            <a href="{% url 'dashboard:product_list' %}"
+                class="list-group-item list-group-item-action {% if 'product' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="bi bi-box-seam"></i> Products
+            </a>
+            <a href="{% url 'dashboard:category_list' %}"
+                class="list-group-item list-group-item-action {% if 'category' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="bi bi-tags"></i> Categories
+            </a>
+            <a href="{% url 'dashboard:order_list' %}"
+                class="list-group-item list-group-item-action {% if 'order' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="bi bi-receipt"></i> Orders
+            </a>
+        </div>
+    </div>
+    <div class="col-12 col-lg-10">
+        {% block dashboard_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

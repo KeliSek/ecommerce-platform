@@ -1,0 +1,41 @@
+{# dashboard/templates/dashboard/category_list.html #}
+{% extends 'dashboard/base_dashboard.html' %}
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 text-primary mb-0"><i class="bi bi-tags"></i> Categories</h1>
+    <a href="{% url 'dashboard:category_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add
+        category</a>
+</div>
+<div class="table-responsive">
+    <table class="table table-hover align-middle bg-white shadow-sm">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Products</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td>{{ category.name }}</td>
+                <td>{{ category.products.count }}</td>
+                <td class="text-end">
+                    <a href="{% url 'dashboard:category_update' category.pk %}"
+                        class="btn btn-sm btn-outline-primary">Edit</a>
+                    <form action="{% url 'dashboard:category_delete' category.pk %}" method="post" class="d-inline"
+                        onsubmit="return confirm('Delete {{ category.name }}?');">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center text-muted py-4">No categories yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

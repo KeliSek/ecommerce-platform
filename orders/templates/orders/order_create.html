@@ -1,0 +1,53 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container-fluid py-5" style="margin-top: 110px;">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
+            <div>
+                <h1 class="h2 mb-2">Checkout</h1>
+                <p class="text-muted mb-0">Complete your details to place your order.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card shadow border-0">
+                    <div class="card-body p-4">
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button type="submit" class="btn btn-primary w-100 mt-3">Place Order</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card shadow border-0 h-100">
+                    <div class="card-body p-4">
+                        <h2 class="h5 mb-3">Order Summary</h2>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <tbody>
+                                    {% for item in cart %}
+                                    <tr>
+                                        <td>{{ item.product.name }} × {{ item.quantity }}</td>
+                                        <td class="text-end">${{ item.total_price }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-3 fw-bold">
+                            <span>Total</span>
+                            <span>${{ cart.get_total_price }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

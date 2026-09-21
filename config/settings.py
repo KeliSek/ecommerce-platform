@@ -1,3 +1,4 @@
+# config/settings.py
 """
 Django settings for config project.
 
@@ -12,23 +13,32 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 
+import dj_database_url
 from decouple import config
+from django.contrib.messages import constants as message_constants
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config("SECRET_KEY")
+PAYSTACK_PUBLIC_KEY = config("PAYSTACK_PUBLIC_KEY")
+PAYSTACK_SECRET_KEY = config("PAYSTACK_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+# Comma-separated list in env, e.g. ALLOWED_HOSTS=example.com,www.example.com
+_hosts = str(config("ALLOWED_HOSTS", default="localhost,127.0.0.1"))
+ALLOWED_HOSTS = [h.strip() for h in _hosts.split(",") if h.strip()]
 
+RENDER_HOST = str(config("RENDER_EXTERNAL_HOSTNAME", default=""))
+if RENDER_HOST:
+    ALLOWED_HOSTS.append(RENDER_HOST)
+
+_origins = str(config("CSRF_TRUSTED_ORIGINS", default=""))
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in _origins.split(",") if o.strip()]
 
 # Application definition
 
@@ -59,6 +69,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -80,6 +91,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "cart.context_processors.cart_count",
             ],
         },
     },
@@ -87,20 +99,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST", default="localhost"),
-        "PORT": config("DB_PORT", default="5432"),
+DATABASE_URL = str(config("DATABASE_URL", default=""))
+
+if DATABASE_URL:
+    # Production (Render)
+    DATABASES = {
+        "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
-}
+else:
+    # Local development
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("DB_NAME"),
+            "USER": config("DB_USER"),
+            "PASSWORD": config("DB_PASSWORD"),
+            "HOST": config("DB_HOST", default="localhost"),
+            "PORT": config("DB_PORT", default="5432"),
+        }
+    }
 
 
 # Password validation
@@ -147,12 +167,49 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}
+MESSAGE_TAGS = {
+    message_constants.ERROR: "danger",
+}
 
+
+# Security headers
+# https://docs.djangoproject.com/en/6.1/topics/security/
+# Auto-relaxed whenever DEBUG=True so local dev over plain http still works.
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "same-origin"
+X_FRAME_OPTIONS = "DENY"
+
+SECURE_HSTS_SECONDS = 3600 if not DEBUG else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG
+
+# Upload limits — protects against disk-fill / DoS via oversized "product images"
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5MB
+
+# Session hardening
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 7 days
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+# config/settings.py — add near your PAYSTACK_* settings
+GEMINI_API_KEY = config("GEMINI_API_KEY", default="")
+GEMINI_MODEL = config("GEMINI_MODEL", default="gemini-flash-latest")
+
+
+# config/settings.py — add near your other custom settings
+LOW_STOCK_THRESHOLD = config("LOW_STOCK_THRESHOLD", default=5, cast=int)
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-MAILERS = {
-    "default": {
-        "BACKEND": "django.core.mail.backends.console.EmailBackend",
-    },
-}
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

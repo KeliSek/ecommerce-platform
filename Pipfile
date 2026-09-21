@@ -11,6 +11,10 @@ django-htmx = "*"
 pillow = "*"
 django-crispy-forms = "*"
 crispy-bootstrap5 = "*"
+requests = "*"
+gunicorn = "*"
+whitenoise = "*"
+dj-database-url = "*"
 
 [dev-packages]
 

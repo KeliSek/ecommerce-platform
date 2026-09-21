@@ -1,0 +1,38 @@
+{# catalog/templates/catalog/_add_to_cart_widget.html #}
+<div id="add-to-cart-{{ product.id }}" class="position-relative" style="z-index: 2;">
+    {% if oob_cart_count is not None %}
+    <span id="cart-count-badge" hx-swap-oob="true" class="badge rounded-pill bg-danger {% if not oob_cart_count %}d-none{% endif %}">
+        {{ oob_cart_count }}
+    </span>
+    {% endif %}
+    {% if state == "added" %}
+    <button type="button" class="btn btn-success w-100 btn-sm" disabled
+        hx-get="{% url 'cart:cart_add_widget' product.id %}"
+        hx-trigger="load delay:1200ms"
+        hx-target="#add-to-cart-{{ product.id }}"
+        hx-swap="outerHTML">
+        <i class="bi bi-check-lg"></i> Added
+    </button>
+    {% elif state == "error" %}
+    <button type="button" class="btn btn-danger w-100 btn-sm" disabled
+        hx-get="{% url 'cart:cart_add_widget' product.id %}"
+        hx-trigger="load delay:1800ms"
+        hx-target="#add-to-cart-{{ product.id }}"
+        hx-swap="outerHTML">
+        <i class="bi bi-exclamation-triangle"></i> Unavailable
+    </button>
+    {% else %}
+    <form method="post" action="{% url 'cart:cart_add' product.id %}"
+        hx-post="{% url 'cart:cart_add' product.id %}"
+        hx-target="#add-to-cart-{{ product.id }}"
+        hx-swap="outerHTML">
+        {% csrf_token %}
+        <input type="hidden" name="quantity" value="1">
+        <input type="hidden" name="override" value="False">
+        <button type="submit" class="btn btn-primary w-100 btn-sm" {% if not product.in_stock %}disabled{% endif %}>
+            <i class="bi bi-cart-plus"></i>
+            {% if product.in_stock %}Add to cart{% else %}Out of stock{% endif %}
+        </button>
+    </form>
+    {% endif %}
+</div>

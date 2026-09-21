@@ -1,0 +1,23 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container py-5" style="margin-top: 110px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 text-center">
+            <div class="mb-4">
+                <span style="font-size: 3rem;">⚠️</span>
+            </div>
+            <h1 class="mb-3">Payment Failed</h1>
+            <p class="text-muted mb-4">
+                {% if error %}
+                {{ error }}
+                {% else %}
+                Something went wrong while processing your payment. No charge was completed.
+                {% endif %}
+            </p>
+
+            <a href="{% url 'orders:order_list' %}" class="btn btn-outline-primary">Back to My Orders</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

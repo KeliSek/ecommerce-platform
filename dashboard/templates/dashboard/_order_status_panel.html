@@ -1,0 +1,39 @@
+{# dashboard/templates/dashboard/_order_status_panel.html #}
+{% load crispy_forms_tags %}
+<div id="order-status-panel">
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header bg-white fw-semibold">Status</div>
+        <div class="card-body">
+            <span class="badge bg-secondary mb-3">{{ order.get_status_display }}</span>
+            <form hx-post="{% url 'dashboard:order_update_status' order.pk %}"
+                  hx-target="#order-status-panel"
+                  hx-swap="outerHTML">
+                {% csrf_token %}
+                {{ status_form|crispy }}
+                <button type="submit" class="btn btn-primary btn-sm">
+                    Update status
+                    <span class="htmx-indicator spinner-border spinner-border-sm ms-2" role="status"></span>
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white fw-semibold">History</div>
+        <ul class="list-group list-group-flush">
+            {% for entry in order.status_history.all %}
+            <li class="list-group-item small">
+                <span class="fw-semibold">
+                    {{ entry.get_previous_status_display|default:"—" }} → {{ entry.get_new_status_display }}
+                </span>
+                <br>
+                <span class="text-muted">
+                    {{ entry.changed_at|date:"d M Y, H:i" }}
+                    {% if entry.changed_by %}by {{ entry.changed_by.username }}{% endif %}
+                </span>
+            </li>
+            {% empty %}
+            <li class="list-group-item small text-muted">No status changes yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

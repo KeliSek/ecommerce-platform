@@ -1,7 +1,7 @@
 {% extends 'core/base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-<div class="container-fluid py-5">
+<div class="container-fluid py-5" style="margin-top: 110px;">
     <div class="container">
         <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
             <div>
@@ -103,7 +103,7 @@
                         </dl>
                         <a href="{% url 'catalog:product_list' %}" class="btn btn-outline-secondary w-100 mb-2">Continue
                             Shopping</a>
-                        <a href="#" class="btn btn-primary w-100">Checkout</a>
+                        <a href="{% url 'orders:order_create' %}" class="btn btn-primary">Checkout</a>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,73 @@
+{# dashboard/templates/dashboard/index.html #}
+{% extends 'dashboard/base_dashboard.html' %}
+{% block dashboard_content %}
+<h1 class="h3 text-primary mb-4"><i class="bi bi-speedometer2"></i> Overview</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small">Products</div>
+                <div class="fs-3 fw-bold">{{ total_products }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small">Low stock (≤{{ low_stock_count }})</div>
+                <div class="fs-3 fw-bold {% if low_stock_count %}text-danger{% endif %}">{{ low_stock_count }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small">Pending orders</div>
+                <div class="fs-3 fw-bold">{{ pending_orders }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small">Revenue (paid)</div>
+                <div class="fs-3 fw-bold text-success">GH₵{{ revenue }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white fw-semibold">Recent orders</div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in recent_orders %}
+                <tr>
+                    <td>{{ order.order_number }}</td>
+                    <td>{{ order.full_name }}</td>
+                    <td><span class="badge bg-secondary">{{ order.get_status_display }}</span></td>
+                    <td>{{ order.created_at|date:"d M Y" }}</td>
+                    <td><a href="{% url 'dashboard:order_detail' order.pk %}"
+                            class="btn btn-sm btn-outline-primary">View</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-3">No orders yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="container-fluid py-5" style="margin-top: 110px;">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
+            <div>
+                <h1 class="h2 mb-2">My Orders</h1>
+                <p class="text-muted mb-0">Track your purchases and order status.</p>
+            </div>
+            {% if orders %}
+            <span class="badge bg-primary fs-6">{{ orders|length }} order{{ orders|length|pluralize }}</span>
+            {% endif %}
+        </div>
+
+        {% if orders %}
+        <div class="row g-4">
+            {% for order in orders %}
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <div
+                            class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+                            <div>
+                                <p class="text-muted small mb-1">Order {{ order.order_number }}</p>
+                                <h2 class="h5 mb-0">Placed {{ order.created_at|date:"M d, Y" }}</h2>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge text-bg-light border text-dark">{{ order.status|title }}</span>
+                                <span class="fw-semibold">GH₵{{ order.get_total_cost }}</span>
+                                {% if order.status == "pending" %}
+                                <a href="{% url 'payments:initiate_payment' order.id %}"
+                                    class="btn btn-success btn-sm">Pay Now</a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order.items.all %}
+                                    <tr>
+                                        <td>{{ item.product.name }}</td>
+                                        <td>${{ item.price }}</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td>${{ item.get_cost }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-muted">No items in this order.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="card shadow border-0">
+            <div class="card-body text-center py-5">
+                <h2 class="h4 mb-3">No orders yet</h2>
+                <p class="text-muted mb-4">Your order history will appear here once you place an order.</p>
+                <a href="{% url 'catalog:product_list' %}" class="btn btn-primary">Shop Products</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

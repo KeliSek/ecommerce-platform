@@ -1,0 +1,56 @@
+{# dashboard/templates/dashboard/order_detail.html #}
+{% extends 'dashboard/base_dashboard.html' %}
+{% load crispy_forms_tags %}
+{% block dashboard_content %}
+<h1 class="h3 text-primary mb-4"><i class="bi bi-receipt"></i> Order {{ order.order_number }}</h1>
+
+<div class="row g-4">
+    <div class="col-12 col-lg-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-semibold">Items</div>
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td>{{ item.product.name }}</td>
+                            <td>GH₵{{ item.price }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>GH₵{{ item.get_cost }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="fw-bold">
+                            <td colspan="3" class="text-end">Total</td>
+                            <td>GH₵{{ order.get_total_cost }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-5">
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-header bg-white fw-semibold">Customer</div>
+            <div class="card-body">
+                <p class="mb-1"><strong>{{ order.full_name }}</strong></p>
+                <p class="mb-1">{{ order.email }}</p>
+                <p class="mb-1">{{ order.address }}, {{ order.city }}</p>
+                <p class="mb-0">{{ order.postal_code }}</p>
+            </div>
+        </div>
+
+{# with: #}
+        {% include 'dashboard/_order_status_panel.html' %}
+    </div>
+</div>
+{% endblock %}

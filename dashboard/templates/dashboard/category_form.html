@@ -1,0 +1,16 @@
+{# dashboard/templates/dashboard/category_form.html #}
+{% extends 'dashboard/base_dashboard.html' %}
+{% load crispy_forms_tags %}
+{% block dashboard_content %}
+<h1 class="h3 text-primary mb-4">
+    <i class="bi bi-tags"></i> {% if is_create %}Add category{% else %}Edit {{ category.name }}{% endif %}
+</h1>
+<div class="card shadow-sm border-0" style="max-width: 480px;">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+        </form>
+    </div>
+</div>
+{% endblock %}

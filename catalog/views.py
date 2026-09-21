@@ -1,4 +1,6 @@
+# catalog/views.py
 from cart.forms import CartAddProductForm
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 
 from .models import Category, Product
@@ -12,12 +14,17 @@ def product_list(request):
     if category_slug:
         products = products.filter(category__slug=category_slug)
 
+    query = request.GET.get("q", "").strip()
+    if query:
+        products = products.filter(Q(name__icontains=query) | Q(description__icontains=query))
+
     return render(
         request,
         "catalog/product_list.html",
         {
             "products": products,
             "categories": categories,
+            "query": query,
         },
     )
 

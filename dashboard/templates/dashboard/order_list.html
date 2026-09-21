@@ -1,0 +1,73 @@
+{# dashboard/templates/dashboard/order_list.html #}
+{% extends 'dashboard/base_dashboard.html' %}
+{% block dashboard_content %}
+<h1 class="h3 text-primary mb-4"><i class="bi bi-receipt"></i> Orders</h1>
+
+<form class="row g-2 mb-3" method="get">
+    <div class="col-12 col-md-6">
+        <input type="search" name="q" value="{{ query }}" class="form-control" placeholder="Search by order number...">
+    </div>
+    <div class="col-8 col-md-4">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">All statuses</option>
+            {% for value, label in status_choices %}
+            <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-4 col-md-2 d-grid">
+        <button class="btn btn-outline-secondary" type="submit">Filter</button>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle bg-white shadow-sm">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if page_obj %}
+                {% for order in page_obj %}
+                <tr>
+                    <td>{{ order.order_number }}</td>
+                    <td>{{ order.full_name }}</td>
+                    <td><span class="badge bg-secondary">{{ order.get_status_display }}</span></td>
+                    <td>GH₵{{ order.get_total_cost }}</td>
+                    <td>{{ order.created_at|date:"d M Y" }}</td>
+                    <td><a href="{% url 'dashboard:order_detail' order.pk %}"
+                            class="btn btn-sm btn-outline-primary">View</a></td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">No orders found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav>
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link"
+                href="?page={{ page_obj.previous_page_number }}&q={{ query }}">Previous</a></li>
+        {% endif %}
+        <li class="page-item disabled"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages
+                }}</span></li>
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
