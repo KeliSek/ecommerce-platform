@@ -375,6 +375,10 @@ body {
     width: 100%;
 }
 
+.cart-widget-layer {
+    z-index: 2;
+}
+
 .auth-panel,
 .status-panel {
     max-width: 520px;

@@ -1,5 +1,5 @@
 {# catalog/templates/catalog/_add_to_cart_widget.html #}
-<div id="add-to-cart-{{ product.id }}" class="position-relative" style="z-index: 2;">
+<div id="add-to-cart-{{ product.id }}" class="position-relative cart-widget-layer">
     {% if oob_cart_count is not None %}
     <span id="cart-count-badge" hx-swap-oob="true" class="badge rounded-pill bg-danger {% if not oob_cart_count %}d-none{% endif %}">
         {{ oob_cart_count }}
