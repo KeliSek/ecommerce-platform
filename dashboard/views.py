@@ -4,6 +4,7 @@ import logging
 from catalog.models import Category, Product
 from django.conf import settings
 from django.contrib import messages
+from django.core.cache import cache
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
@@ -17,6 +18,22 @@ from .forms import CategoryForm, OrderStatusForm, ProductForm, ProductImageUploa
 from .utils import unique_slugify
 
 logger = logging.getLogger(__name__)
+
+
+AI_UPLOAD_LIMIT = 2          # AI analyses per user...
+AI_UPLOAD_WINDOW = 60 * 60    # ...per hour
+
+
+def _ai_rate_limited(user_id):
+    """Counts this attempt and returns True if the user is over the limit."""
+    key = f"ai_upload:{user_id}"
+    cache.add(key, 0, AI_UPLOAD_WINDOW)  # creates the counter only if it's new
+    try:
+        count = cache.incr(key)
+    except ValueError:  # counter expired between add and incr
+        cache.set(key, 1, AI_UPLOAD_WINDOW)
+        count = 1
+    return count > AI_UPLOAD_LIMIT
 
 
 @vendor_required
@@ -118,18 +135,25 @@ def product_ai_upload(request):
             image_file.seek(0)  # rewind so Django can still save it to storage
 
             suggestion = None
-            try:
-                suggestion = analyze_product_image(image_bytes, image_file.content_type)
-            except AIAnalysisError as exc:
-                logger.warning("AI product analysis failed: %s", exc)
-                if settings.DEBUG:
-                    messages.warning(request, f"AI analysis failed: {exc}")
-                else:
-                    messages.warning(
-                        request,
-                        "AI analysis didn't work this time, so a draft was created with "
-                        "the photo only — fill in the details manually below.",
-                    )
+            if _ai_rate_limited(request.user.pk):
+                messages.warning(
+                    request,
+                    "You've reached the hourly limit for AI analysis. A draft was "
+                    "created with the photo only — fill in the details manually below.",
+                )
+            else:
+                try:
+                    suggestion = analyze_product_image(image_bytes, image_file.content_type)
+                except AIAnalysisError as exc:
+                    logger.warning("AI product analysis failed: %s", exc)
+                    if settings.DEBUG:
+                        messages.warning(request, f"AI analysis failed: {exc}")
+                    else:
+                        messages.warning(
+                            request,
+                            "AI analysis didn't work this time, so a draft was created with "
+                            "the photo only — fill in the details manually below.",
+                        )
 
             category = None
             if suggestion and suggestion["category_guess"]:

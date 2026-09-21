@@ -12,7 +12,7 @@ import requests
 from django.conf import settings
 
 RETRY_STATUSES = {500, 502, 503, 504}
-MAX_ATTEMPTS = 3
+MAX_ATTEMPTS = 2
 
 GEMINI_ENDPOINT = (
     "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
@@ -76,7 +76,7 @@ def analyze_product_image(image_bytes, mime_type):
                 url,
                 headers={"x-goog-api-key": api_key, "Content-Type": "application/json"},
                 json=payload,
-                timeout=15,
+                timeout=10,
             )
             if response.status_code in RETRY_STATUSES and not is_last:
                 time.sleep(2 ** attempt)  # waits 1s, then 2s
