@@ -16,6 +16,11 @@ $border-radius: 0.5rem;
 // keep only project variables here (bootstrap imports are handled in main.scss)
 // Custom theme colors to be merged after Bootstrap's variables are loaded
 $custom-theme-colors: (
-  "altlight": #fbf5e5,
-  "altdark": #c29938,
+  "primary": $cerulean,
+  "secondary": $cool-steel,
+  "light": $platinum,
+  "dark": $cerulean-dark,
+  "info": $pacific-blue,
+  "altlight": $platinum,
+  "altdark": $cerulean-dark,
 );

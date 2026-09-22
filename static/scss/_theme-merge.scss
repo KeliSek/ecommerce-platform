@@ -3,7 +3,7 @@
 
 // Only merge if both maps exist to avoid undefined variable errors
 @if variable-exists(theme-colors) and variable-exists(custom-theme-colors) {
-  $theme-colors: map-merge($custom-theme-colors, $theme-colors);
+  $theme-colors: map-merge($theme-colors, $custom-theme-colors);
 } @else if variable-exists(custom-theme-colors) {
   $theme-colors: $custom-theme-colors;
 }

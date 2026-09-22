@@ -6,6 +6,7 @@ cloudinary==1.46.2
 crispy-bootstrap5==2026.3; python_version >= '3.9'
 dj-database-url==3.1.2; python_version >= '3.10'
 django==6.1.1; python_version >= '3.12'
+django-axes==8.3.1; python_version >= '3.10'
 django-cloudinary-storage==0.3.0
 django-crispy-forms==2.7; python_version >= '3.10'
 django-htmx==1.29.0; python_version >= '3.10'

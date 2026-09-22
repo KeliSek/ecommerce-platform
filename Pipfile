@@ -16,6 +16,7 @@ gunicorn = "*"
 whitenoise = "*"
 dj-database-url = "*"
 django-cloudinary-storage = "*"
+django-axes = "*"
 
 [dev-packages]
 
