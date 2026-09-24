@@ -21,6 +21,7 @@ PAYSTACK_VERIFY_URL = "https://api.paystack.co/transaction/verify/"
 
 
 @login_required
+@require_POST
 def initiate_payment(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
 
